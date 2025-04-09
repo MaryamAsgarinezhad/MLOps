@@ -92,19 +92,24 @@ kubectl logs <job-pod-name>
 
 To gather and visualize resource usage metrics such as CPU, GPU, memory, RAM, and GPU RAM (GRAM) for each worker and head node, we use:
 
+
   - PodMonitor – to collect metrics at the pod level
 
   - ServiceMonitor – to collect metrics from Ray services
 
+
 These resources are defined in:
+
 
    - KubeRayResources/ray-pod-monitor.yaml
 
    - KubeRayResources/ray-service-monitor.yaml
 
-Make sure your Kubernetes cluster has Prometheus Operator deployed (e.g., via kube-prometheus-stack). Once deployed, Prometheus will automatically scrape Ray metrics exposed on /metrics.
+
+#### Make sure your Kubernetes cluster has Prometheus Operator deployed (e.g., via kube-prometheus-stack). Once deployed, Prometheus will automatically scrape Ray metrics exposed on /metrics.
 
    - These metrics can be visualized using Prometheus, Grafana, or any Prometheus-compatible dashboarding tool.
+
 
 To apply the monitoring manifests:
 
