@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ray-metrics-monitor
+  labels:
+    release: prometheus 
+spec:
+  selector:
+    matchLabels:
+          app.kubernetes.io/created-by: kuberay-operator
+          app.kubernetes.io/name: kuberay
+          ray.io/cluster: ray-cluster
+          ray.io/identifier: ray-cluster-head
+          ray.io/node-type: head
+  endpoints:
+    - port: metrics
+      interval: 15s
+  namespaceSelector:
+    matchNames:
+      - sre-dev
+  targetLabels:
+    - app
+  podTargetLabels:
+    - ray.io/cluster

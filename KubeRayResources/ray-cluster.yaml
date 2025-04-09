@@ -1,0 +1,68 @@
+apiVersion: ray.io/v1alpha1
+kind: RayCluster
+metadata:
+  name: ray-cluster
+spec:
+  rayVersion: "2.30.0"
+  headGroupSpec:
+    serviceType: ClusterIP
+    replicas: 1
+    rayStartParams:
+      dashboard-host: "0.0.0.0"
+      num-cpus: "0"
+      num-gpus: "0" 
+      metrics-export-port: "8080"
+    template:
+      spec:
+        tolerations:
+          - key: "nodepool"
+            operator: "Equal"
+            value: "high-ram"
+            effect: "NoSchedule"
+        containers:
+        - name: ray-head
+          image: docker.dev/rayproject/ray-ml:latest-gpu
+          resources:
+            limits:
+              #nvidia.com/gpu: 1
+              cpu: 1
+              memory: 40Gi
+          ports:
+            - name: redis
+              containerPort: 6379
+            - name: dashboard
+              containerPort: 8265
+            - name: metrics
+              containerPort: 8080
+  workerGroupSpecs:
+    - groupName: ray-worker
+      replicas: 2
+      minReplicas: 1
+      maxReplicas: 10
+      rayStartParams:
+        num-cpus: "2"
+        num-gpus: "1"
+      template:
+        spec:
+          tolerations:
+          - key: "nodepool"
+            operator: "Equal"
+            value: "gpu-platform"
+            effect: "NoSchedule"
+          containers:
+          - name: ray-worker
+            image: docker.dev/rayproject/ray-ml:latest-gpu
+            env:
+              - name: CUDA_VISIBLE_DEVICES
+                value: "0"
+            resources:
+              limits:
+                nvidia.com/gpu: 1
+                cpu: 2
+                memory: 15Gi
+            ports:
+              - name: metrics
+                containerPort: 8080
+            volumeMounts:
+              - name: nvidia-driver
+                mountPath: /usr/local/nvidia

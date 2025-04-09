@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: ray-cluster-pod-monitor
+  namespace: sre-dev 
+  labels:
+    release: prometheus 
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/created-by: kuberay-operator
+      app.kubernetes.io/name: kuberay
+      ray.io/cluster: ray-cluster
+      ray.io/group: ray-worker
+      ray.io/identifier: ray-cluster-worker
+      ray.io/is-ray-node: "yes"
+      ray.io/node-type: worker
+  namespaceSelector:
+    matchNames:
+      - sre-dev  
+  podMetricsEndpoints:
+    - port: metrics  
+      interval: 30s
+      path: /metrics
+      scheme: http
+      honorLabels: true
