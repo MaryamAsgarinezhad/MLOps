@@ -85,7 +85,7 @@ kubectl get pods
 kubectl logs <job-pod-name>
 ```
 
-Replace <job-pod-name> with the actual pod name running your training job.
+  - Replace <job-pod-name> with the actual pod name running your training job.
 
 
 ### Monitoring and Metrics Collection
